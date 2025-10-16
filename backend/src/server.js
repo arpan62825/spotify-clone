@@ -1,6 +1,10 @@
 // import dependencies
 import express from "express";
 import dotenv from "dotenv";
+import { clerkMiddleware } from "@clerk/express";
+
+// ...
+import { connectToDatabase } from "./lib/database.js";
 
 // import Routes
 import albumRoutes from "./routes/album.route.js";
@@ -9,13 +13,11 @@ import authRoutes from "./routes/auth.route.js";
 import statRoutes from "./routes/stat.route.js";
 import userRoutes from "./routes/user.route.js";
 
-// ...
-import { connectToDatabase } from "./lib/database.js";
-
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(clerkMiddleware());
 
 app.use("/api/album", albumRoutes);
 app.use("/api/auth", authRoutes);
