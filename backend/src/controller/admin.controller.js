@@ -52,9 +52,9 @@ export const createSong = async (req, res) => {
 
 export const deleteSong = async (req, res) => {
   try {
-    const { songId } = req.param;
+    const { songId } = req.params;
 
-    const song = Song.findById(songId);
+    const song = await Song.findById(songId);
 
     if (song.albumId) {
       await Album.findByIdAndUpdate(song.albumId, {
@@ -67,5 +67,42 @@ export const deleteSong = async (req, res) => {
     res.json({ message: "Song deleted successfully" });
   } catch (error) {
     console.error(`An error occurred while deleting the song: ${error}`);
+  }
+};
+
+export const createAlbum = async (req, res) => {
+  try {
+    if (!req.files || !req.files.imageFile) {
+      return res
+        .status(400)
+        .json({ message: "Problem getting the album cover." });
+    }
+
+    const { title, artist, releaseYear } = req.body;
+
+    const imageFile = req.files.imageFile;
+
+    const imageUrl = uploadToCloudinary(imageFile);
+
+    const album = new Album({
+      title,
+      artist,
+      imageUrl,
+      releaseYear,
+    });
+
+    await album.save();
+  } catch (error) {
+    console.error(`An error occurred while creating the album: ${error}`);
+  }
+};
+
+export const deleteAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Album.findByIdAndDelete(id);
+    res.status(200).json({ message: "Album deleted successfully" });
+  } catch (error) {
+    console.error(`An error occurred while deleting the album: ${error}`);
   }
 };
