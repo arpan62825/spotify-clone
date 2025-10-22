@@ -11,7 +11,8 @@ const router = Router();
 
 router.get("/songs", protectRoute, isAdmin, createSong);
 router.delete("/songs/:id", protectRoute, isAdmin, deleteSong);
+
 router.get("/albums/", protectRoute, isAdmin, createAlbum);
-router.delete("/albums/", protectRoute, isAdmin, deleteAlbum);
+router.delete("/albums/:id", protectRoute, isAdmin, deleteAlbum);
 
 export default router;

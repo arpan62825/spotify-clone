@@ -21,6 +21,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(clerkMiddleware());
+
 app.use(
   fileUpload({
     useTempFiles: true,
@@ -44,3 +45,5 @@ app.listen(PORT, () => {
   connectToDatabase();
   console.log(`Server is running on port ${PORT}`);
 });
+
+// TODO: implement socket.io
