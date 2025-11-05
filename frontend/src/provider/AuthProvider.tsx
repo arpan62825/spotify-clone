@@ -12,7 +12,7 @@ const updateApiToken = (token: string | null) => {
 };
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { getToken, userId } = useAuth();
+  const { getToken } = useAuth();
   const [loading, setLoading] = useState(true);
 
   //* take the token and update the fetch api Header
@@ -25,6 +25,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log(
           `An error occurred while trying to update the api token: ${error}`
         );
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -34,7 +36,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   if (loading) {
     return (
       <div className="h-screen w-full flex items-center justify-center">
-        <Loader className="size-8 animate-spin text-emerald-700" />
+        <Loader className="size-8 animate-spin text-emerald-500" />
       </div>
     );
   }
