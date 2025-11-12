@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { clerkMiddleware } from "@clerk/express";
 import fileUpload from "express-fileupload";
 import path from "path";
+import cors from "cors";
 
 // ...
 import { connectToDatabase } from "./lib/database.js";
@@ -21,6 +22,12 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(clerkMiddleware());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(
   fileUpload({

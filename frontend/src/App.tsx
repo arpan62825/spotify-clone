@@ -10,7 +10,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/auth-callback" element={<AuthCallbackPage />} />
-        <Route path="/signup" element={<SignupPage />}></Route>
+        <Route path="/signup" element={<SignupPage />} />
       </Routes>
     </>
   );
