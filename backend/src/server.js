@@ -20,14 +20,23 @@ const __dirname = path.resolve();
 dotenv.config();
 
 const app = express();
-app.use(express.json());
-app.use(clerkMiddleware());
 app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Clerk-Redirect-To",
+      "Clerk-Token"
+    ],
   })
 );
+
+app.use(express.json());
+app.use(clerkMiddleware());
 
 app.use(
   fileUpload({

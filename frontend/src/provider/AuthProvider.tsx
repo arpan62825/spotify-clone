@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Loader } from "lucide-react";
 
 const updateApiToken = (token: string | null) => {
-  if (token) {
+  if (token && token.length > 0) {
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   } else {
     delete axiosInstance.defaults.headers.common["Authorization"];

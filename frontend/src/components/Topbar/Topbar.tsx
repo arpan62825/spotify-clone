@@ -5,7 +5,6 @@ import { UserButton, useUser, SignInButton } from "@clerk/clerk-react";
 
 import googlePng from "../../assets/google-logo.png";
 import spotifyPng from "../../assets/spotify-logo.png";
-import addUserToDb from "../ui/addUserToDb.tsx";
 
 const Topbar = () => {
   const { isSignedIn, user } = useUser();
@@ -28,10 +27,12 @@ const Topbar = () => {
             </Link>
           ) : !isSignedIn ? (
             // TODO: How to change the color of the button?
-            <Button variant={"outline"} onClick={addUserToDb}>
-              <img src={googlePng} alt="google-logo" className="size-4" />
-              <SignInButton>Continue With Google</SignInButton>
-            </Button>
+            <SignInButton forceRedirectUrl={"/auth-add-user"}>
+              <Button variant={"outline"}>
+                <img src={googlePng} alt="google-logo" className="size-4" />
+                Continue With Google
+              </Button>
+            </SignInButton>
           ) : null}
           <div className="flex items-center">
             <UserButton />

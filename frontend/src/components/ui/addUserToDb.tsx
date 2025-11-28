@@ -9,17 +9,16 @@ const AddUserToDb = () => {
   const { isLoaded, user } = useUser();
   const navigate = useNavigate();
   useEffect(() => {
-    const syncUser = () => async () => {
+    const syncUser = async () => {
       try {
         if (!isLoaded || !user) return;
 
-        await axiosInstance.post("/auth/callback", {
+        const result = await axiosInstance.post("/auth/callback", {
           id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
+          fullName: user.fullName,
           imageUrl: user.imageUrl,
         });
-        console.log(user);
+        console.log(result);
       } catch (error) {
         console.error(`An error occurred while trying to sync user: ${error}`);
       } finally {
