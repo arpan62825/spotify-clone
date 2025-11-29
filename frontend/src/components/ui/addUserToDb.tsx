@@ -11,7 +11,7 @@ const AddUserToDb = () => {
   useEffect(() => {
     const syncUser = async () => {
       try {
-        if (!isLoaded || !user) return;
+        if (!isLoaded || !user) return
 
         const result = await axiosInstance.post("/auth/callback", {
           id: user.id,
