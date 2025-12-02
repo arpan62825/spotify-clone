@@ -5,9 +5,11 @@ import {
   ResizablePanel,
 } from "@/components/ui/resizable";
 import { useState, useEffect } from "react";
+import LeftSidebar from "./components/LeftSidebar";
+import ChatBar from "./components/ChatBar.tsx";
+
 
 const LayoutPage = () => {
-  // console.log(window.innerWidth);
   const [width, setWidth] = useState(window.innerWidth);
   useEffect(() => {
     const handleWidth = () => {
@@ -18,19 +20,18 @@ const LayoutPage = () => {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-neutral-950 flex flex-col">
+    <div className="h-[calc(100vh-64px)] bg-neutral-950 flex flex-col pt-2">
       <ResizablePanelGroup direction="horizontal">
         {/* Side Bar */}
         <ResizablePanel
           defaultSize={20}
           minSize={width <= 618 ? 0 : 10}
           maxSize={30}
-          className="flex justify-center items-center"
         >
-          <h1>Side Bar</h1>
+          <LeftSidebar />
         </ResizablePanel>
 
-        <ResizableHandle className="w-1 bg-neutral-900 cursor-pointer" />
+        <ResizableHandle className="w-2 bg-neutral-950 cursor-pointer" />
 
         {/* Main Content */}
         <ResizablePanel defaultSize={60}>
@@ -38,13 +39,13 @@ const LayoutPage = () => {
         </ResizablePanel>
 
         {/* Chat Bar */}
-        <ResizableHandle className="w-1 bg-neutral-900 cursor-pointer" />
+        <ResizableHandle className="w-2 bg-neutral-950 cursor-pointer" />
 
         <ResizablePanel
           defaultSize={25}
           className="flex justify-center items-center"
         >
-          <h1>chat-bar</h1>
+          <ChatBar />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

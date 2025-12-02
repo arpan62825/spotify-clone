@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import SignupPage from "./pages/SignupPage.tsx";
 import AddUserToDb from "./components/ui/AddUserToDb.tsx";
 import LayoutPage from "./pages/layout/LayoutPage.tsx";
+import ChatPage from "./pages/chat/ChatPage.tsx";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
 
         <Route element={<LayoutPage />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/chat" element={<ChatPage />} />
         </Route>
       </Routes>
     </>
