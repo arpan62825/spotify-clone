@@ -14,7 +14,7 @@ export const authCallback = async (req, res) => {
       });
     }
 
-    res.status(200).json({ id, fullName, imageUrl });
+    return res.status(200).json({ id, fullName, imageUrl });
   } catch (error) {
     console.error(
       `Error occurred in the '/callback' route while creating new User: ${error}`

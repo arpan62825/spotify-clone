@@ -4,12 +4,11 @@ import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { SignedIn } from "@clerk/clerk-react";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
-import PlaylistSkeleton from "../../../components/skeleton/PlaylistSkeleton.tsx"
-
+import PlaylistSkeleton from "../../../components/skeleton/PlaylistSkeleton.tsx";
+import ActualPlaylist from "@/components/content/ActualPlaylist.tsx";
 
 const LeftSidebar = () => {
-
-  const isLoading = true;
+  const isLoading = false;
 
   return (
     <div className="h-full flex flex-col gap-2">
@@ -57,8 +56,7 @@ const LeftSidebar = () => {
         </div>
         <ScrollArea className="h-full">
           <div className="space-y-2">
-
-          {isLoading ? (<PlaylistSkeleton />) : (null)}
+            {isLoading ? <PlaylistSkeleton /> : <ActualPlaylist />}
           </div>
         </ScrollArea>
       </div>
