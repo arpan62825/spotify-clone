@@ -6,9 +6,15 @@ import { SignedIn } from "@clerk/clerk-react";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import PlaylistSkeleton from "../../../components/skeleton/PlaylistSkeleton.tsx";
 import ActualPlaylist from "@/components/content/ActualPlaylist.tsx";
+import { useMusicStore } from "@/stores/useMusicStore.ts";
+import { useEffect } from "react";
 
 const LeftSidebar = () => {
-  const isLoading = false;
+  const { isLoading, albums, fetchAlbums } = useMusicStore();
+
+  useEffect(() => {
+    fetchAlbums();
+  }, [fetchAlbums]);
 
   return (
     <div className="h-full flex flex-col gap-2">
@@ -56,7 +62,11 @@ const LeftSidebar = () => {
         </div>
         <ScrollArea className="h-full">
           <div className="space-y-2">
-            {isLoading ? <PlaylistSkeleton /> : <ActualPlaylist />}
+            {isLoading ? (
+              <PlaylistSkeleton />
+            ) : (
+              <ActualPlaylist albums={albums} />
+            )}
           </div>
         </ScrollArea>
       </div>
