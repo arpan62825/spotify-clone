@@ -8,8 +8,10 @@ interface MusicStore {
   albums: Album[];
   isLoading: boolean;
   error: string | null;
+  currentAlbum: Album | null;
 
   fetchAlbums: () => Promise<void>;
+  fetchAlbumsById: (albumId: string) => Promise<void>;
 }
 
 export const useMusicStore = create<MusicStore>((set) => {
@@ -18,6 +20,7 @@ export const useMusicStore = create<MusicStore>((set) => {
     albums: [],
     isLoading: false,
     error: null,
+    currentAlbum: null,
 
     fetchAlbums: async () => {
       set({ isLoading: true, error: null });
@@ -27,13 +30,25 @@ export const useMusicStore = create<MusicStore>((set) => {
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
           set({
-            error:
-              error.response?.data?.message ??
-              "Failed to fetch albums",
+            error: error.response?.data?.message ?? "Failed to fetch albums",
           });
         } else {
           set({ error: "An unexpected error occurred" });
         }
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
+    fetchAlbumsById: async (albumId) => {
+      set({ error: null, isLoading: true });
+      try {
+        const res = await axiosInstance.get(`/album/${albumId}`);
+        set({ currentAlbum: res.data });
+      } catch (error) {
+        console.log(
+          `An error occurred while fetching the album by it's id: ${error}`
+        );
       } finally {
         set({ isLoading: false });
       }
