@@ -1,6 +1,3 @@
-// import { useState, useEffect } from "react";
-// import axiosInstance from "@/lib/axios";
-// import { useMusicStore } from "@/stores/useMusicSore";
 import type { Album } from "@/types";
 import { Link } from "react-router-dom";
 
@@ -11,11 +8,8 @@ interface ActualPlaylistProps {
 const ActualPlaylist = ({ albums }: ActualPlaylistProps) => {
   return albums.map((album) => {
     return (
-      <Link to={`/albums/${album._id}`}>
-        <div
-          key={album._id}
-          className="p-2 rounded-md flex items-center gap-3 justify-center"
-        >
+      <Link key={album._id} to={`/albums/${album._id}`}>
+        <div className="p-2 rounded-md flex items-center gap-3 justify-center">
           <div className="size-12 rounded-md flex-shrink-0 bg-zinc-700">
             <img
               src={album.imageUrl}
