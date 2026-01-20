@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import LeftSidebar from "./components/LeftSidebar";
 import ChatBar from "./components/ChatBar.tsx";
 
-
 const LayoutPage = () => {
   const [width, setWidth] = useState(window.innerWidth);
   useEffect(() => {
@@ -34,17 +33,14 @@ const LayoutPage = () => {
         <ResizableHandle className="w-2 bg-neutral-950 cursor-pointer" />
 
         {/* Main Content */}
-        <ResizablePanel defaultSize={60}>
+        <ResizablePanel defaultSize={65}>
           <Outlet />
         </ResizablePanel>
 
         {/* Chat Bar */}
         <ResizableHandle className="w-2 bg-neutral-950 cursor-pointer" />
 
-        <ResizablePanel
-          defaultSize={25}
-          className="flex justify-center items-center"
-        >
+        <ResizablePanel defaultSize={20}>
           <ChatBar />
         </ResizablePanel>
       </ResizablePanelGroup>

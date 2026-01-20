@@ -15,7 +15,6 @@ import {
 
 const AlbumPage = () => {
   const { albumId } = useParams();
-  // const { fetchAlbumsById, currentAlbum, isLoading } = useMusicStore();
   const fetchAlbumsById = useMusicStore((state) => state.fetchAlbumsById);
   const currentAlbum = useMusicStore((state) => state.currentAlbum);
   const isLoading = useMusicStore((state) => state.isLoading);
@@ -51,15 +50,15 @@ const AlbumPage = () => {
           <Loader className="size-8 animate-spin text-emerald-500" />
         </div>
       ) : (
-        <div className="h-full">
-          <ScrollArea className="h-full">
+        <div className="h-screen ">
+          <ScrollArea className="h-screen w-full">
             {/* Main content */}
-            <div className="relative h-full">
+            <div className="relative min-h-full">
               {/* background gradient */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#5038a0]/80 via-zinc-900/80 to-zinc-900 pointer-events-none rounded-lg" />
 
               {/* content */}
-              <div className="relative z-10">
+              <div className="z-10 relative h-full">
                 <div className="flex gap-6 p-6">
                   <img
                     src={currentAlbum?.imageUrl}
@@ -88,7 +87,7 @@ const AlbumPage = () => {
                 </div>
 
                 {/* Songs */}
-                <Table>
+                <Table className="">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-zinc-400">#</TableHead>
