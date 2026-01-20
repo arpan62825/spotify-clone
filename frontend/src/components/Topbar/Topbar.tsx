@@ -9,7 +9,7 @@ import spotifyPng from "../../assets/spotify-logo.png";
 const Topbar = () => {
   const { isSignedIn, user } = useUser();
 
-  return ( 
+  return (
     <>
       <div className="flex items-center justify-between p-4 sticky top-0 bg-zinc-800/70 backdrop-blur-md z-10 h-16">
         <Link to="/">
@@ -19,7 +19,7 @@ const Topbar = () => {
           </div>
         </Link>
         <div className="flex items-center gap-4 justify-center">
-          {isSignedIn && user.id === import.meta.env.VITE_CLERK_USER_ID ? (
+          {isSignedIn && user.id === import.meta.env.VITE_CLERK_USER_ID ? ( 
             <Link to={"/admin"}>
               <Button variant={"outline"}>
                 <LayoutDashboardIcon className="h-4 w-fit inline" />

@@ -17,9 +17,9 @@ const ActualPlaylist = ({ albums }: ActualPlaylistProps) => {
               className="size-full rounded-lg"
             />
           </div>
-          <div className="flex-1 min-w-0 hidden md:block space-y-2 ">
-            <div className="h-4 rounded w-3/4 text-md">{album.title}</div>
-            <div className="h-2 rounded w-1/2 text-xs">{album.artist}</div>
+          <div className="flex-1 min-w-0 hidden md:block space-y-2">
+            <div className="h-full rounded w-3/4 text-md truncate">{album.title}</div>
+            <div className="h-full rounded w-1/2 text-xs truncate">{album.artist}</div>
           </div>
         </div>
       </Link>
