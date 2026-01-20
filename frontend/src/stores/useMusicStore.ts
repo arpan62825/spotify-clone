@@ -10,6 +10,14 @@ interface MusicStore {
   error: string | null;
   currentAlbum: Album | null;
 
+  featuredSongs: Song[];
+  madeForYouSongs: Song[];
+  trendingSongs: Song[];
+
+  fetchFeaturedSongs: () => Promise<void>;
+  fetchMadeForYouSongs: () => Promise<void>;
+  fetchTrendingSongs: () => Promise<void>;
+
   fetchAlbums: () => Promise<void>;
   fetchAlbumsById: (albumId: string) => Promise<void>;
 }
@@ -21,6 +29,10 @@ export const useMusicStore = create<MusicStore>((set) => {
     isLoading: false,
     error: null,
     currentAlbum: null,
+
+    featuredSongs: [],
+    madeForYouSongs: [],
+    trendingSongs: [],
 
     fetchAlbums: async () => {
       set({ isLoading: true, error: null });
@@ -47,10 +59,43 @@ export const useMusicStore = create<MusicStore>((set) => {
         set({ currentAlbum: res.data });
       } catch (error) {
         console.log(
-          `An error occurred while fetching the album by it's id: ${error}`
+          `An error occurred while fetching the album by it's id: ${error}`,
         );
       } finally {
         set({ isLoading: false });
+      }
+    },
+
+    fetchFeaturedSongs: async () => {
+      try {
+        const res = await axiosInstance.get("/song/featured");
+        set({ featuredSongs: res.data });
+      } catch (error) {
+        console.error(
+          `An error occurred while fetching featured songs: ${error}`,
+        );
+      }
+    },
+
+    fetchMadeForYouSongs: async () => {
+      try {
+        const res = await axiosInstance.get("/song/made-for-you");
+        set({ madeForYouSongs: res.data });
+      } catch (error) {
+        console.error(
+          `An error occurred while fetching the made for you songs: ${error}`,
+        );
+      }
+    },
+
+    fetchTrendingSongs: async () => {
+      try {
+        const res = await axiosInstance.get("/song/trending");
+        set({ trendingSongs: res.data });
+      } catch (error) {
+        console.error(
+          `An error occurred while fetching the trending songs: ${error}`,
+        );
       }
     },
   };
