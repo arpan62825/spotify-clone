@@ -100,11 +100,14 @@ const AlbumPage = () => {
                       </TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
+                  <TableBody className="">
                     {currentAlbum?.songs.map((song, index) => (
-                      <TableRow key={song._id}>
-                        <TableCell className="font-medium">
-                          {index + 1}
+                      <TableRow key={song._id} className="group hover:bg-zinc-800/50 transition-colors">
+                        <TableCell className="font-medium w-10">
+                          <span className="group-hover:hidden">
+                            {index + 1}
+                          </span>
+                          <Play className="hidden group-hover:block size-4 text-green-400 cursor-pointer" />
                         </TableCell>
                         <TableCell className="flex gap-3">
                           <img

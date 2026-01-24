@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { getAuth } from "@clerk/express";
 
 export const getAllUsers = async (req, res) => {
   try {

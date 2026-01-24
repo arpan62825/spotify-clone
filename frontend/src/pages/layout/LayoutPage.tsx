@@ -5,8 +5,9 @@ import {
   ResizablePanel,
 } from "@/components/ui/resizable";
 import { useState, useEffect } from "react";
-import LeftSidebar from "./components/LeftSidebar";
+import LeftSidebar from "./components/LeftSidebar.tsx";
 import ChatBar from "./components/ChatBar.tsx";
+import AudioPlayer from "./components/AudioPlayer.tsx";
 
 const LayoutPage = () => {
   const [width, setWidth] = useState(window.innerWidth);
@@ -44,6 +45,7 @@ const LayoutPage = () => {
           <ChatBar />
         </ResizablePanel>
       </ResizablePanelGroup>
+      <AudioPlayer />
     </div>
   );
 };
