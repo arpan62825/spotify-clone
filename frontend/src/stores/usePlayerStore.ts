@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Song } from "@/types";
+import type { Song } from "@/types";
 
 interface PlayerStore {
   currentSong: Song | null;
@@ -52,7 +52,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => {
         currentIndex: songIndex !== -1 ? songIndex : get().currentIndex,
       });
     },
-
 
     togglePlay: () => {
       set({ isPlaying: !get().isPlaying });
