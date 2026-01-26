@@ -20,6 +20,21 @@ const AudioPlayer = () => {
     audio?.addEventListener("ended", () => playNext());
   }, [playNext]);
 
+  // Handle song changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentSong) return;
+
+    const shouldSongChange = previousSongRef.current !== currentSong?.imageUrl;
+
+    if (shouldSongChange) {
+      audio.src = currentSong?.audioUrl;
+      audio.currentTime = 0;
+      previousSongRef.current = currentSong?.audioUrl;
+      if (isPlaying) audio.play();
+    }
+  }, [currentSong, isPlaying]);
+
   return (
     <div>
       <audio src="" ref={audioRef} />

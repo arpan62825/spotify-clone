@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Clock, Loader, Play } from "lucide-react";
+import { Clock, Divide, Loader, Pause, Play } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -12,16 +12,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import usePlayerStore from "@/stores/usePlayerStore.ts";
 
 const AlbumPage = () => {
   const { albumId } = useParams();
-  const fetchAlbumsById = useMusicStore((state) => state.fetchAlbumsById);
-  const currentAlbum = useMusicStore((state) => state.currentAlbum);
-  const isLoading = useMusicStore((state) => state.isLoading);
+
+  const { fetchAlbumsById, currentAlbum, isLoading } = useMusicStore();
+  const { currentSong, isPlaying, playAlbum, togglePlay } = usePlayerStore();
 
   useEffect(() => {
     if (albumId) fetchAlbumsById(albumId);
   }, [albumId, fetchAlbumsById]);
+
+  const handlePlayAlbum = (index: number) => {
+    if (!currentAlbum) return;
+
+    playAlbum(currentAlbum?.songs, index);
+  };
 
   const formatDate = (isoDate: Date) => {
     const date = new Date(isoDate);
@@ -101,33 +108,48 @@ const AlbumPage = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody className="">
-                    {currentAlbum?.songs.map((song, index) => (
-                      <TableRow key={song._id} className="group hover:bg-zinc-800/50 transition-colors">
-                        <TableCell className="font-medium w-10">
-                          <span className="group-hover:hidden">
-                            {index + 1}
-                          </span>
-                          <Play className="hidden group-hover:block size-4 text-green-400 cursor-pointer" />
-                        </TableCell>
-                        <TableCell className="flex gap-3">
-                          <img
-                            src={song.imageUrl}
-                            alt={song.title}
-                            className="size-12 rounded"
-                          />
-                          <div className="flex flex-col justify-top">
-                            <p className="font-bold">{song.title}</p>
-                            <p className="text-sm text-zinc-400">
-                              {song.artist}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{formatDate(song.createdAt)}</TableCell>
-                        <TableCell className="text-right">
-                          {formatDuration(song.duration)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {currentAlbum?.songs.map((song, index) => {
+                      const isCurrentSong = currentSong?._id === song._id;
+                      return (
+                        <TableRow
+                          key={song._id}
+                          onClick={() => handlePlayAlbum(index)}
+                          className="group hover:bg-zinc-800/50 transition-colors"
+                        >
+                          <TableCell className="font-medium w-10">
+                            {isCurrentSong && isPlaying ? (
+                              <div>
+                                <Pause className="size-4 text-green-400 cursor-pointer" />
+                              </div>
+                            ) : (
+                              <span className="group-hover:hidden">
+                                {index + 1}
+                              </span>
+                            )}
+                            {!isCurrentSong && (
+                              <Play className="hidden group-hover:block size-4 text-green-400 cursor-pointer" />
+                            )}
+                          </TableCell>
+                          <TableCell className="flex gap-3">
+                            <img
+                              src={song.imageUrl}
+                              alt={song.title}
+                              className="size-12 rounded"
+                            />
+                            <div className="flex flex-col justify-top">
+                              <p className="font-bold">{song.title}</p>
+                              <p className="text-sm text-zinc-400">
+                                {song.artist}
+                              </p>
+                            </div>
+                          </TableCell>
+                          <TableCell>{formatDate(song.createdAt)}</TableCell>
+                          <TableCell className="text-right">
+                            {formatDuration(song.duration)}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
