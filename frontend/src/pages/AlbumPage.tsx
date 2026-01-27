@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Clock, Divide, Loader, Pause, Play } from "lucide-react";
+import { CirclePause, Clock, Divide, Loader, Pause, Play } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -24,7 +24,18 @@ const AlbumPage = () => {
     if (albumId) fetchAlbumsById(albumId);
   }, [albumId, fetchAlbumsById]);
 
-  const handlePlayAlbum = (index: number) => {
+  const handlePlayAlbum = () => {
+    if (!currentAlbum) return;
+
+    const isCurrentAlbumPlaying = currentAlbum?.songs.some(
+      (song) => song._id === currentSong?._id,
+    );
+
+    if (isCurrentAlbumPlaying) togglePlay();
+    else playAlbum(currentAlbum?.songs, 0);
+  };
+
+  const handlePlaySong = (index: number) => {
     if (!currentAlbum) return;
 
     playAlbum(currentAlbum?.songs, index);
@@ -88,8 +99,11 @@ const AlbumPage = () => {
                 </div>
                 {/* Play Button */}
                 <div className="ml-6 my-6">
-                  <Button className="size-12 rounded-full bg-green-400 hover:bg-green-500 transition:all duration-300 ease-in-out">
-                    <Play className="size-5 " />
+                  <Button
+                    onClick={() => handlePlayAlbum()}
+                    className="size-12 rounded-full bg-green-400 hover:bg-green-500 transition:all duration-300 ease-in-out"
+                  >
+                    {isPlaying ? <Pause /> : <Play className="size-5 " />}
                   </Button>
                 </div>
 
@@ -113,7 +127,7 @@ const AlbumPage = () => {
                       return (
                         <TableRow
                           key={song._id}
-                          onClick={() => handlePlayAlbum(index)}
+                          onClick={() => handlePlaySong(index)}
                           className="group hover:bg-zinc-800/50 transition-colors"
                         >
                           <TableCell className="font-medium w-10">

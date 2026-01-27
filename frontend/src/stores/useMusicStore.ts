@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import axios from "axios";
-import type { Album, Song } from "@/types";
+import type { Album, Song, User } from "@/types";
 import { create } from "zustand";
 
 interface MusicStore {
@@ -9,17 +9,25 @@ interface MusicStore {
   isLoading: boolean;
   error: string | null;
   currentAlbum: Album | null;
+  stats: {
+    statSongs: number;
+    statAlbums: number;
+    statUsers: number;
+  };
 
   featuredSongs: Song[];
   madeForYouSongs: Song[];
   trendingSongs: Song[];
 
+  fetchAllSongs: () => Promise<void>;
   fetchFeaturedSongs: () => Promise<void>;
   fetchMadeForYouSongs: () => Promise<void>;
   fetchTrendingSongs: () => Promise<void>;
 
   fetchAlbums: () => Promise<void>;
   fetchAlbumsById: (albumId: string) => Promise<void>;
+
+  setStats: (songs: Song[], albums: Album[], users: User[]) => void;
 }
 
 export const useMusicStore = create<MusicStore>((set) => {
@@ -29,10 +37,29 @@ export const useMusicStore = create<MusicStore>((set) => {
     isLoading: false,
     error: null,
     currentAlbum: null,
+    stats: {
+      statSongs: 0,
+      statAlbums: 0,
+      statUsers: 0,
+    },
 
     featuredSongs: [],
     madeForYouSongs: [],
     trendingSongs: [],
+
+    fetchAllSongs: async () => {
+      set({ isLoading: true });
+      try {
+        const res = await axiosInstance.get("/song");
+        set({ songs: res.data });
+      } catch (error) {
+        console.error(
+          `An error occurred while fetching all the songs: ${error}`,
+        );
+      } finally {
+        set({ isLoading: false });
+      }
+    },
 
     fetchAlbums: async () => {
       set({ isLoading: true, error: null });
@@ -97,6 +124,20 @@ export const useMusicStore = create<MusicStore>((set) => {
           `An error occurred while fetching the trending songs: ${error}`,
         );
       }
+    },
+
+    setStats: (songs, albums, users) => {
+      const totalSongs = songs?.length;
+      const totalAlbums = albums?.length;
+      const totalUsers = users?.length;
+
+      set({
+        stats: {
+          statSongs: totalSongs,
+          statAlbums: totalAlbums,
+          statUsers: totalUsers,
+        },
+      });
     },
   };
 });
