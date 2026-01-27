@@ -6,6 +6,7 @@ import AddUserToDb from "./components/ui/AddUserToDb.tsx";
 import LayoutPage from "./pages/layout/LayoutPage.tsx";
 import ChatPage from "./pages/ChatPage.tsx";
 import AlbumPage from "./pages/AlbumPage.tsx";
+import AdminPage from "./pages/AdminPage.tsx";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Routes>
         <Route path="/auth-add-user" element={<AddUserToDb />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/admin" element={<AdminPage />} />
 
         <Route element={<LayoutPage />}>
           <Route path="/" element={<HomePage />} />

@@ -1,5 +1,5 @@
 import { LayoutDashboardIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { UserButton, useUser, SignInButton } from "@clerk/clerk-react";
 
@@ -8,7 +8,7 @@ import spotifyPng from "../../assets/spotify-logo.png";
 
 const Topbar = () => {
   const { isSignedIn, user } = useUser();
-
+  const location = useLocation();
   return (
     <>
       <div className="flex items-center justify-between p-4 sticky top-0 bg-zinc-800/70 backdrop-blur-md z-10 h-16">
@@ -19,13 +19,19 @@ const Topbar = () => {
           </div>
         </Link>
         <div className="flex items-center gap-4 justify-center">
-          {isSignedIn && user.id === import.meta.env.VITE_CLERK_USER_ID ? ( 
-            <Link to={"/admin"}>
-              <Button variant={"outline"}>
-                <LayoutDashboardIcon className="h-4 w-fit inline" />
-                Admin Dashboard
-              </Button>
-            </Link>
+          {isSignedIn && user.id === import.meta.env.VITE_CLERK_USER_ID ? (
+            location.pathname === "/admin" ? (
+              <Link to={"/"}>
+                <Button variant={"outline"}>Home</Button>
+              </Link>
+            ) : (
+              <Link to={"/admin"}>
+                <Button variant={"outline"}>
+                  <LayoutDashboardIcon className="h-4 w-fit inline" />
+                  Admin Dashboard
+                </Button>
+              </Link>
+            )
           ) : !isSignedIn ? (
             <SignInButton forceRedirectUrl={"/auth-add-user"}>
               <Button variant={"outline"}>
