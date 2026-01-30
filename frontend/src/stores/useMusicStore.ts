@@ -10,9 +10,10 @@ interface MusicStore {
   error: string | null;
   currentAlbum: Album | null;
   stats: {
-    statSongs: number;
-    statAlbums: number;
-    statUsers: number;
+    totalSongs: number;
+    totalAlbums: number;
+    totalUsers: number;
+    totalArtists: number;
   };
 
   featuredSongs: Song[];
@@ -27,10 +28,10 @@ interface MusicStore {
   fetchAlbums: () => Promise<void>;
   fetchAlbumsById: (albumId: string) => Promise<void>;
 
-  setStats: (songs: Song[], albums: Album[], users: User[]) => void;
+  setStats: () => Promise<void>;
 }
 
-export const useMusicStore = create<MusicStore>((set) => {
+export const useMusicStore = create<MusicStore>((set, get) => {
   return {
     songs: [],
     albums: [],
@@ -38,9 +39,10 @@ export const useMusicStore = create<MusicStore>((set) => {
     error: null,
     currentAlbum: null,
     stats: {
-      statSongs: 0,
-      statAlbums: 0,
-      statUsers: 0,
+      totalSongs: 0,
+      totalAlbums: 0,
+      totalUsers: 0,
+      totalArtists: 0,
     },
 
     featuredSongs: [],
@@ -126,18 +128,18 @@ export const useMusicStore = create<MusicStore>((set) => {
       }
     },
 
-    setStats: (songs, albums, users) => {
-      const totalSongs = songs?.length;
-      const totalAlbums = albums?.length;
-      const totalUsers = users?.length;
-
-      set({
-        stats: {
-          statSongs: totalSongs,
-          statAlbums: totalAlbums,
-          statUsers: totalUsers,
-        },
-      });
+    setStats: async () => {
+      set({ isLoading: true });
+      try {
+        const res = await axiosInstance.get("/stats");
+        console.log("hi");
+        console.log(res.data);
+        set({ stats: res.data });
+      } catch (error) {
+        console.error(`An error occurred while fetching stats: ${error}`);
+      } finally {
+        set({ isLoading: false });
+      }
     },
   };
 });

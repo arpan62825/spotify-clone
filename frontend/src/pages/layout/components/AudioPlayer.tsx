@@ -37,7 +37,7 @@ const AudioPlayer = () => {
 
   return (
     <div>
-      <audio src="" ref={audioRef} />
+      <audio ref={audioRef} />
     </div>
   );
 };
