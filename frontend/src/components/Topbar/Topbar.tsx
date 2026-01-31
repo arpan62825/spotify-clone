@@ -11,7 +11,7 @@ const Topbar = () => {
   const location = useLocation();
   return (
     <>
-      <div className="flex items-center justify-between p-4 sticky top-0 bg-zinc-800/70 backdrop-blur-md z-10 h-16">
+      <div className="flex items-center justify-between p-4 fixed top-0 bg-zinc-800/70 backdrop-blur-md z-10 h-16 w-dvw">
         <Link to="/">
           <div className="flex gap-2 items-center text-2xl font-bold">
             <img src={spotifyPng} alt="spotify-logo" className="size-8" />

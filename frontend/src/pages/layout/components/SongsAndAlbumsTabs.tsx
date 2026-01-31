@@ -1,9 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Music, Library } from "lucide-react";
@@ -13,8 +10,11 @@ import AlbumsTable from "./AlbumsTable.tsx";
 
 const SongsAndAlbumsTabs = () => {
   return (
-    <Tabs defaultValue="songs">
-      <TabsList>
+    <Tabs
+      defaultValue="songs"
+      className="flex flex-col h-full bg-transparent"
+    >
+      <TabsList className="shrink-0">
         <TabsTrigger value="songs">
           <Music className="size-4" />
           Songs
@@ -25,25 +25,17 @@ const SongsAndAlbumsTabs = () => {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="songs">
-        <Card>
-          <CardHeader>
-            <CardTitle>Songs</CardTitle>
-            <CardDescription>Total number of songs</CardDescription>
-          </CardHeader>
-          <CardContent className="text-muted-foreground text-sm">
+      <TabsContent value="songs" className="flex-1 overflow-hidden">
+        <Card className="h-full flex flex-col">
+          <CardContent className="flex-1 overflow-auto text-muted-foreground text-sm">
             <SongsTable />
           </CardContent>
         </Card>
       </TabsContent>
 
-      <TabsContent value="albums">
-        <Card>
-          <CardHeader>
-            <CardTitle>Albums</CardTitle>
-            <CardDescription>Total number of Albums</CardDescription>
-          </CardHeader>
-          <CardContent className="text-muted-foreground text-sm">
+      <TabsContent value="albums" className="flex-1 overflow-hidden">
+        <Card className="h-full flex flex-col">
+          <CardContent className="flex-1 overflow-auto text-muted-foreground text-sm">
             <AlbumsTable />
           </CardContent>
         </Card>

@@ -8,7 +8,7 @@ const AdminPage = () => {
   return (
     <div>
       {isSignedIn && user.id === import.meta.env.VITE_CLERK_USER_ID ? (
-        <div>
+        <div className="flex flex-col h-[calc(100vh-64px)] mt-16">
           <Stats />
           <SongsAndAlbumsTabs />
         </div>

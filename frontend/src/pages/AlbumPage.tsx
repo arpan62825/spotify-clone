@@ -108,7 +108,7 @@ const AlbumPage = () => {
                 </div>
 
                 {/* Songs */}
-                <Table className="">
+                <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-zinc-400">#</TableHead>

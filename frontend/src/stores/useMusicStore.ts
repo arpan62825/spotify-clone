@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import axios from "axios";
-import type { Album, Song, User } from "@/types";
+import type { Album, Song } from "@/types";
 import { create } from "zustand";
 
 interface MusicStore {
@@ -98,6 +98,8 @@ export const useMusicStore = create<MusicStore>((set, get) => {
     fetchFeaturedSongs: async () => {
       try {
         const res = await axiosInstance.get("/song/featured");
+        console.log("hola");
+
         set({ featuredSongs: res.data });
       } catch (error) {
         console.error(
@@ -131,7 +133,7 @@ export const useMusicStore = create<MusicStore>((set, get) => {
     setStats: async () => {
       set({ isLoading: true });
       try {
-        const res = await axiosInstance.get("/stats");
+        const res = await axiosInstance.get("/stat");
         console.log("hi");
         console.log(res.data);
         set({ stats: res.data });

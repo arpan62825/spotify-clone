@@ -20,7 +20,7 @@ const LayoutPage = () => {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-neutral-950 flex flex-col pt-2">
+    <div className="h-[calc(100vh-64px)] bg-neutral-950 flex flex-col pt-2 mt-16">
       <ResizablePanelGroup direction="horizontal">
         {/* Side Bar */}
         <ResizablePanel
