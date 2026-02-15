@@ -6,13 +6,18 @@ import {
   deleteAlbum,
   deleteSong,
 } from "../controller/admin.controller.js";
+import multer from "multer"
+
+const upload = multer({
+  storage: multer.memoryStorage()
+})
 
 const router = Router();
 
-router.get("/songs", protectRoute, isAdmin, createSong);
+router.post("/songs", protectRoute, isAdmin,upload.single('audio'), createSong);
 router.delete("/songs/:id", protectRoute, isAdmin, deleteSong);
 
-router.get("/albums/", protectRoute, isAdmin, createAlbum);
+router.post("/albums/", protectRoute, isAdmin, createAlbum);
 router.delete("/albums/:id", protectRoute, isAdmin, deleteAlbum);
 
 export default router;

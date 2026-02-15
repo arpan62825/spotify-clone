@@ -14,7 +14,7 @@ export const protectRoute = async (req, res, next) => {
 
 export const isAdmin = async (req, res, next) => {
   try {
-    const currentUser = clerkClient.users.getUser(req.auth.UserId);
+    const currentUser = await clerkClient.users.getUser(req.auth.userId);
 
     const isAdmin =
       (await currentUser)?.primaryEmailAddress.emailAddress ===
@@ -27,5 +27,10 @@ export const isAdmin = async (req, res, next) => {
     }
 
     next();
-  } catch (error) {}
+  } catch (error) {
+    console.log(
+      `An error occurred while checking if the user is an admin: ${error}`,
+    );
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };

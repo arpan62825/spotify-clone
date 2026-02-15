@@ -9,9 +9,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2, Music } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus } from "lucide-react";
 import { useMusicStore } from "@/stores/useMusicStore.ts";
 import { useEffect } from "react";
+
+import AddSongButton from "./AddSongButton.tsx";
 
 const SongsTable = () => {
   const { songs, fetchAllSongs } = useMusicStore();
@@ -40,11 +41,7 @@ const SongsTable = () => {
             Manage your music tracks
           </p>
         </div>
-
-        <Button className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600">
-          <Plus className="h-4 w-4" />
-          Add Song
-        </Button>
+        <AddSongButton />
       </div>
 
       {/* Scrollable Table */}

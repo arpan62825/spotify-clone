@@ -16,7 +16,7 @@ const Stats = () => {
       <div className="w-full">
         <Card className="p-5">
           <div className="flex items-start gap-5">
-            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-emerald-400/15 border-emerald-500 border-1 ">
+            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-emerald-400/15">
               <Music className="text-emerald-500" />
             </div>
             <div className="flex flex-col gap-1">
@@ -35,7 +35,7 @@ const Stats = () => {
       <div className="w-full">
         <Card className="p-5">
           <div className="flex items-start gap-5">
-            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-purple-300/15 border-purple-400 border-1 ">
+            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-purple-300/15">
               <Library className="text-purple-400" />
             </div>
             <div className="flex flex-col gap-1">
@@ -54,7 +54,7 @@ const Stats = () => {
       <div className="w-full">
         <Card className="p-5">
           <div className="flex items-start gap-5">
-            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-orange-300/15 border-orange-400 border-1 ">
+            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-orange-300/15">
               <Users className="text-orange-400" />
             </div>
             <div className="flex flex-col gap-1">
@@ -73,7 +73,7 @@ const Stats = () => {
       <div className="w-full">
         <Card className="p-5">
           <div className="flex items-start gap-5">
-            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-cyan-300/15 border-cyan-400 border-1 ">
+            <div className="size-12 flex justify-center items-center rounded-md shrink-0 bg-cyan-300/15">
               <User className="text-cyan-400" />
             </div>
             <div className="flex flex-col gap-1">

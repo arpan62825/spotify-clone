@@ -1,5 +1,5 @@
 const AuthCallbackPage = () => {
-  
+
 
   return <div>AuthCallbackPage</div>;
 };

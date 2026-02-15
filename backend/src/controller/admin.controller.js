@@ -1,50 +1,49 @@
 import cloudinary from "../lib/cloudinary.js";
 import { Album } from "../models/album.model.js";
 import { Song } from "../models/song.model.js";
+import mm from "music-metadata";
 
-const uploadToCloudinary = async (file) => {
-  try {
-    const result = cloudinary.uploader.upload(file.tempFilePath, {
-      resource_type: "auto",
-    });
+const uploadToCloudinary = async (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: "video" },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      },
+    );
 
-    return (await result).secure_url;
-  } catch (error) {
-    console.error(`An error occurred while uploading to cloudinary: ${error}`);
-  }
+    stream.end(fileBuffer);
+  });
 };
 
 export const createSong = async (req, res) => {
   try {
-    if (!req.files || !req.files.imageFile || !req.files.audioFile) {
-      return res.status(400).json({ message: "Please upload all the files" });
+    if (!req.file) {
+      return res.status(400).json({ message: "Audio file is required" });
     }
-    const { title, artist, duration, albumId } = req.body;
 
-    const imageFile = req.files.imageFile;
-    const audioFile = req.files.audioFile;
+    const metadata = await mm.parseBuffer(req.file.buffer, req.file.mimetype);
 
-    const imageUrl = await uploadToCloudinary(imageFile);
-    const audioUrl = await uploadToCloudinary(audioFile);
+    const picture = metadata.common.picture?.[0];
+
+    const imageUrl = picture
+      ? `data:${picture.format};base64,${picture.data.toString("base64")}`
+      : null;
+
+    const audioUrl = await uploadToCloudinary(req.file.buffer);
 
     const song = new Song({
-      title,
-      artist,
+      title: metadata.common.title || "Unknown Title",
+      artist: metadata.common.artist || "Unknown Artist",
       imageUrl,
       audioUrl,
-      duration,
-      albumId: albumId || null,
+      duration: metadata.format.duration,
     });
 
     await song.save();
 
-    if (albumId) {
-      await Album.findByIdAndUpdate(albumId, {
-        $push: {
-          song: song._id,
-        },
-      });
-    }
+    return res.status(201).json(song);
   } catch (error) {
     console.error(`an error occurred while uploading the song: ${error}`);
   }
