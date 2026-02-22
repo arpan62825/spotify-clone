@@ -1,87 +1,152 @@
-import cloudinary from "../lib/cloudinary.js";
-import { Album } from "../models/album.model.js";
 import { Song } from "../models/song.model.js";
-import mm from "music-metadata";
+import { Album } from "../models/album.model.js";
+import cloudinary from "../lib/cloudinary.js";
+import { parseBuffer } from "music-metadata";
+import fs from "fs";
 
-const uploadToCloudinary = async (fileBuffer) => {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: "video" },
+// helper function for cloudinary uploads
+const uploadToCloudinary = async (file, folder = "songs") => {
+  try {
+    const result = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "auto",
+        folder,
+        use_filename: true,
+        unique_filename: true,
+      },
       (error, result) => {
-        if (error) return reject(error);
-        resolve(result.secure_url);
+        if (error) throw error;
+        return result;
       },
     );
-
-    stream.end(fileBuffer);
-  });
+    return result.secure_url;
+  } catch (error) {
+    console.error("Error in uploadToCloudinary", error);
+    throw new Error("Error uploading to cloudinary");
+  }
 };
-
-export const createSong = async (req, res) => {
+export const extractSongMetadata = async (req, res, next) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "Audio file is required" });
     }
 
-    const metadata = await mm.parseBuffer(req.file.buffer, req.file.mimetype);
+    const audioFile = req.file;
 
-    const picture = metadata.common.picture?.[0];
+    // Parse metadata using music-metadata (buffer from multer memoryStorage)
+    const metadata = await parseBuffer(audioFile.buffer, audioFile.mimetype);
 
-    const imageUrl = picture
-      ? `data:${picture.format};base64,${picture.data.toString("base64")}`
-      : null;
+    let extracted = {};
 
-    const audioUrl = await uploadToCloudinary(req.file.buffer);
+    if (metadata.common.picture && metadata.common.picture.length > 0) {
+      const picture = metadata.common.picture[0];
+      const base64 = Buffer.from(picture.data).toString("base64");
+
+      extracted = {
+        title: metadata.common.title || "Unknown",
+        imageUrl: {
+          format: picture.format,
+          data: base64,
+        },
+        artist: metadata.common.artist || "Unknown",
+        album: metadata.common.album || "Unknown",
+        duration: metadata.format.duration
+          ? Math.floor(metadata.format.duration)
+          : 0,
+      };
+    }
+
+    res.status(200).json(extracted);
+  } catch (error) {
+    console.error("Error in extractSongMetadata", error);
+    next(error);
+  }
+};
+
+export const createSong = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Audio file is required" });
+    }
+
+    const audioFile = req.file;
+    const imageFile = null; // handle separately if using upload.fields later
+
+    let { title, artist, albumId, duration } = req.body;
+
+    // If metadata not provided from frontend, extract it again (server trust layer)
+    if (!title || !artist || !duration) {
+      const metadata = await parseBuffer(audioFile.buffer, audioFile.mimetype);
+
+      title = metadata.common.title || "Unknown";
+      artist = metadata.common.artist || "Unknown";
+      duration = metadata.format.duration
+        ? Math.floor(metadata.format.duration)
+        : 0;
+    }
+
+    // Upload audio for streaming
+    const audioUrl = await uploadToCloudinary(audioFile, "songs/audio");
+
+    // Upload image if provided
+    let imageUrl = null;
+    if (imageFile) {
+      imageUrl = await uploadToCloudinary(imageFile, "songs/images");
+    }
 
     const song = new Song({
-      title: metadata.common.title || "Unknown Title",
-      artist: metadata.common.artist || "Unknown Artist",
-      imageUrl,
+      title,
+      artist,
       audioUrl,
-      duration: metadata.format.duration,
+      imageUrl,
+      duration,
+      albumId: albumId || null,
     });
 
     await song.save();
 
-    return res.status(201).json(song);
-  } catch (error) {
-    console.error(`an error occurred while uploading the song: ${error}`);
-  }
-};
-
-export const deleteSong = async (req, res) => {
-  try {
-    const { songId } = req.params;
-
-    const song = await Song.findById(songId);
-
-    if (song.albumId) {
-      await Album.findByIdAndUpdate(song.albumId, {
-        $pull: { song: song._id },
+    // If song belongs to an album, update album
+    if (albumId) {
+      await Album.findByIdAndUpdate(albumId, {
+        $push: { songs: song._id },
       });
     }
 
-    await Song.findByIdAndDelete(songId);
-
-    res.json({ message: "Song deleted successfully" });
+    res.status(201).json(song);
   } catch (error) {
-    console.error(`An error occurred while deleting the song: ${error}`);
+    console.error("Error in createSong", error);
+    next(error);
   }
 };
 
-export const createAlbum = async (req, res) => {
+export const deleteSong = async (req, res, next) => {
   try {
-    if (!req.files || !req.files.imageFile) {
-      return res
-        .status(400)
-        .json({ message: "Problem getting the album cover." });
+    const { id } = req.params;
+
+    const song = await Song.findById(id);
+
+    // if song belongs to an album, update the album's songs array
+    if (song.albumId) {
+      await Album.findByIdAndUpdate(song.albumId, {
+        $pull: { songs: song._id },
+      });
     }
 
+    await Song.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Song deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteSong", error);
+    next(error);
+  }
+};
+
+export const createAlbum = async (req, res, next) => {
+  try {
     const { title, artist, releaseYear } = req.body;
+    const { imageFile } = req.files;
 
-    const imageFile = req.files.imageFile;
-
-    const imageUrl = uploadToCloudinary(imageFile);
+    const imageUrl = await uploadToCloudinary(imageFile);
 
     const album = new Album({
       title,
@@ -91,17 +156,26 @@ export const createAlbum = async (req, res) => {
     });
 
     await album.save();
+
+    res.status(201).json(album);
   } catch (error) {
-    console.error(`An error occurred while creating the album: ${error}`);
+    console.error("Error in createAlbum", error);
+    next(error);
   }
 };
 
-export const deleteAlbum = async (req, res) => {
+export const deleteAlbum = async (req, res, next) => {
   try {
     const { id } = req.params;
+    await Song.deleteMany({ albumId: id });
     await Album.findByIdAndDelete(id);
     res.status(200).json({ message: "Album deleted successfully" });
   } catch (error) {
-    console.error(`An error occurred while deleting the album: ${error}`);
+    console.error("Error in deleteAlbum", error);
+    next(error);
   }
+};
+
+export const checkAdmin = async (req, res, next) => {
+  res.status(200).json({ admin: true });
 };
