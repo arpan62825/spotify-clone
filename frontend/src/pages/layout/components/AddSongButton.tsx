@@ -39,7 +39,8 @@ const AddSongButton = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
     if (!file || !metadata) return;
 
@@ -50,7 +51,9 @@ const AddSongButton = () => {
     formData.append("metadata", JSON.stringify(metadata));
 
     try {
-      await axiosInstance.post("/songs", formData);
+      console.log(formData);
+      const res = await axiosInstance.post("/admin/songs", formData);
+      console.log(res.data);
       setFile(null);
       setMetadata(null);
     } catch (error) {
@@ -124,7 +127,11 @@ const AddSongButton = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit" disabled={!metadata || loading}>
+            <Button
+              onClick={handleSubmit}
+              type="submit"
+              disabled={!metadata || loading}
+            >
               Upload Song
             </Button>
           </DialogFooter>

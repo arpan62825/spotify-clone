@@ -7,24 +7,28 @@ import fs from "fs";
 // helper function for cloudinary uploads
 const uploadToCloudinary = async (file, folder = "songs") => {
   try {
-    const result = cloudinary.uploader.upload_stream(
-      {
-        resource_type: "auto",
-        folder,
-        use_filename: true,
-        unique_filename: true,
-      },
-      (error, result) => {
-        if (error) throw error;
-        return result;
-      },
-    );
-    return result.secure_url;
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          resource_type: "auto",
+          folder,
+          use_filename: true,
+          unique_filename: true,
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result.secure_url);
+        },
+      );
+
+      stream.end(file.buffer);
+    });
   } catch (error) {
     console.error("Error in uploadToCloudinary", error);
     throw new Error("Error uploading to cloudinary");
   }
 };
+
 export const extractSongMetadata = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -70,7 +74,8 @@ export const createSong = async (req, res, next) => {
     }
 
     const audioFile = req.file;
-    const imageFile = null; // handle separately if using upload.fields later
+    let imageFile = null;
+    console.log(audioFile);
 
     let { title, artist, albumId, duration } = req.body;
 
@@ -94,23 +99,33 @@ export const createSong = async (req, res, next) => {
       imageUrl = await uploadToCloudinary(imageFile, "songs/images");
     }
 
-    const song = new Song({
+    // const song = new Song({
+    //   title,
+    //   artist,
+    //   audioUrl,
+    //   imageUrl,
+    //   duration,
+    //   albumId: albumId || null,
+    // });
+
+    // await song.save();
+
+    // // If song belongs to an album, update album
+    // if (albumId) {
+    //   await Album.findByIdAndUpdate(albumId, {
+    //     $push: { songs: song._id },
+    //   });
+    // }
+
+    const song = {
       title,
       artist,
       audioUrl,
-      imageUrl,
       duration,
-      albumId: albumId || null,
-    });
+    };
 
-    await song.save();
-
-    // If song belongs to an album, update album
-    if (albumId) {
-      await Album.findByIdAndUpdate(albumId, {
-        $push: { songs: song._id },
-      });
-    }
+    console.log(song);
+    console.log(audioUrl);
 
     res.status(201).json(song);
   } catch (error) {
