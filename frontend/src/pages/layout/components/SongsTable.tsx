@@ -43,7 +43,6 @@ const SongsTable = () => {
         </div>
         <AddSongButton />
       </div>
-
       {/* Scrollable Table */}
       <ScrollArea className="flex-1 rounded-md border h-full">
         <Table>

@@ -4,10 +4,16 @@ import cloudinary from "../lib/cloudinary.js";
 import { parseBuffer } from "music-metadata";
 import fs from "fs";
 
-// helper function for cloudinary uploads
+// cloudinary uploads
 const uploadToCloudinary = async (file, folder = "songs") => {
   try {
     return new Promise((resolve, reject) => {
+      const data = Buffer.isBuffer(file)
+        ? file
+        : file?.buffer && Buffer.isBuffer(file.buffer)
+          ? file.buffer
+          : Buffer.from(file);
+
       const stream = cloudinary.uploader.upload_stream(
         {
           resource_type: "auto",
@@ -21,7 +27,7 @@ const uploadToCloudinary = async (file, folder = "songs") => {
         },
       );
 
-      stream.end(file.buffer);
+      stream.end(data);
     });
   } catch (error) {
     console.error("Error in uploadToCloudinary", error);
@@ -74,21 +80,18 @@ export const createSong = async (req, res, next) => {
     }
 
     const audioFile = req.file;
-    let imageFile = null;
-    console.log(audioFile);
 
     let { title, artist, albumId, duration } = req.body;
 
-    // If metadata not provided from frontend, extract it again (server trust layer)
-    if (!title || !artist || !duration) {
-      const metadata = await parseBuffer(audioFile.buffer, audioFile.mimetype);
+    const metadata = await parseBuffer(audioFile.buffer, audioFile.mimetype);
 
-      title = metadata.common.title || "Unknown";
-      artist = metadata.common.artist || "Unknown";
-      duration = metadata.format.duration
-        ? Math.floor(metadata.format.duration)
-        : 0;
-    }
+    title = metadata.common.title || "Unknown";
+    artist = metadata.common.artist || "Unknown";
+    duration = metadata.format.duration
+      ? Math.floor(metadata.format.duration)
+      : 0;
+    const picture = metadata.common.picture[0];
+    const imageFile = picture.data;
 
     // Upload audio for streaming
     const audioUrl = await uploadToCloudinary(audioFile, "songs/audio");
@@ -99,16 +102,16 @@ export const createSong = async (req, res, next) => {
       imageUrl = await uploadToCloudinary(imageFile, "songs/images");
     }
 
-    // const song = new Song({
-    //   title,
-    //   artist,
-    //   audioUrl,
-    //   imageUrl,
-    //   duration,
-    //   albumId: albumId || null,
-    // });
+    const song = new Song({
+      title,
+      artist,
+      audioUrl,
+      imageUrl,
+      duration,
+      albumId: albumId || null,
+    });
 
-    // await song.save();
+    await song.save();
 
     // // If song belongs to an album, update album
     // if (albumId) {
@@ -116,16 +119,6 @@ export const createSong = async (req, res, next) => {
     //     $push: { songs: song._id },
     //   });
     // }
-
-    const song = {
-      title,
-      artist,
-      audioUrl,
-      duration,
-    };
-
-    console.log(song);
-    console.log(audioUrl);
 
     res.status(201).json(song);
   } catch (error) {
