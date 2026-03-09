@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Play } from "lucide-react";
+import usePlayerStore from "@/stores/usePlayerStore.ts";
 
 export default function HomePage() {
+  const { setCurrentSong, togglePlay, isPlaying } = usePlayerStore();
+
   const {
     featuredSongs,
     trendingSongs,
@@ -34,6 +37,12 @@ export default function HomePage() {
     }
   }, []);
 
+  const handleMusicPlay = (song) => {
+    setCurrentSong(song);
+    console.log("Hello hi honey bunny");
+    // isPlaying ? () => togglePlay() : null;
+  };
+
   return (
     <div className="bg-zinc-800/70 h-full rounded-lg p-6">
       <ScrollArea className="h-full pr-4">
@@ -45,6 +54,7 @@ export default function HomePage() {
             {featuredSongs.map((song) => (
               <div
                 key={song._id}
+                onClick={() => handleMusicPlay(song)}
                 className="flex items-center gap-4 bg-zinc-700/40 hover:bg-zinc-700/70 transition rounded-md p-3 cursor-pointer group relative"
               >
                 <img
@@ -74,6 +84,7 @@ export default function HomePage() {
             {trendingSongs.map((song) => (
               <div
                 key={song._id}
+                onClick={() => handleMusicPlay(song)}
                 className="bg-zinc-900/60 hover:bg-zinc-900 transition rounded-lg p-4 cursor-pointer group relative"
               >
                 <div className="relative mb-3">

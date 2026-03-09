@@ -1,17 +1,18 @@
 import usePlayerStore from "@/stores/usePlayerStore.ts";
+import { Pause, Play } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const AudioPlayer = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const previousSongRef = useRef<string | null>(null);
+  const { currentSong, isPlaying, playNext, togglePlay, setAudio } =
+    usePlayerStore();
 
-  const { currentSong, isPlaying, playNext } = usePlayerStore();
-
-  // Play-Pause logic
   useEffect(() => {
-    if (isPlaying) audioRef.current?.play();
-    else audioRef.current?.pause();
-  }, [isPlaying]);
+    if (audioRef.current) {
+      setAudio(audioRef.current);
+    }
+  }, [setAudio]);
 
   // Autoplay next logic
   useEffect(() => {
@@ -25,19 +26,21 @@ const AudioPlayer = () => {
     const audio = audioRef.current;
     if (!audio || !currentSong) return;
 
-    const shouldSongChange = previousSongRef.current !== currentSong?.imageUrl;
+    const shouldSongChange = previousSongRef.current !== currentSong?.audioUrl;
 
     if (shouldSongChange) {
       audio.src = currentSong?.audioUrl;
-      audio.currentTime = 0;
       previousSongRef.current = currentSong?.audioUrl;
       if (isPlaying) audio.play();
     }
   }, [currentSong, isPlaying]);
 
   return (
-    <div>
+    <div className="h-24 w-full rounded-t-2xl bg-zinc-800/70 mt-2 flex items-center justify-center">
       <audio ref={audioRef} />
+      <div onClick={togglePlay} className="cursor-pointer">
+        {isPlaying ? <Pause /> : <Play />}
+      </div>
     </div>
   );
 };

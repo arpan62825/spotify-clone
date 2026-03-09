@@ -7,6 +7,12 @@ interface PlayerStore {
   queue: Song[];
   currentIndex: number;
 
+  audio: HTMLAudioElement | null;
+
+  setAudio: (audio: HTMLAudioElement) => void;
+  play: () => void;
+  pause: () => void;
+
   initializeQueue: (songs: Song[]) => void;
   playAlbum: (songs: Song[], startIndex?: number) => void;
   setCurrentSong: (song: Song | null) => void;
@@ -21,6 +27,26 @@ const usePlayerStore = create<PlayerStore>((set, get) => {
     isPlaying: false,
     queue: [],
     currentIndex: -1,
+
+    audio: null,
+
+    setAudio: (audio: HTMLAudioElement) => {
+      set({ audio });
+    },
+
+    play: () => {
+      const audio = get().audio;
+      if (!audio) return;
+      audio.play();
+      set({ isPlaying: true });
+    },
+
+    pause: () => {
+      const audio = get().audio;
+      if (!audio) return;
+      audio.pause();
+      set({ isPlaying: false });
+    },
 
     initializeQueue: (songs: Song[]) => {
       set({
@@ -43,7 +69,6 @@ const usePlayerStore = create<PlayerStore>((set, get) => {
 
     setCurrentSong: (song: Song | null) => {
       if (!song) return;
-
       const songIndex = get().queue.findIndex((s) => s._id === song._id);
 
       set({
@@ -54,7 +79,16 @@ const usePlayerStore = create<PlayerStore>((set, get) => {
     },
 
     togglePlay: () => {
-      set({ isPlaying: !get().isPlaying });
+      const { isPlaying, audio } = get();
+      if (!audio) return;
+
+      if (isPlaying) {
+        audio.pause();
+        set({ isPlaying: false });
+      } else {
+        audio.play();
+        set({ isPlaying: true });
+      }
     },
 
     playNext: () => {
