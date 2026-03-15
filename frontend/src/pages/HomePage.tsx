@@ -5,7 +5,8 @@ import { Play } from "lucide-react";
 import usePlayerStore from "@/stores/usePlayerStore.ts";
 
 export default function HomePage() {
-  const { setCurrentSong, togglePlay, isPlaying } = usePlayerStore();
+  const { setCurrentSong, togglePlay, isPlaying, initializeQueue } =
+    usePlayerStore();
 
   const {
     featuredSongs,
