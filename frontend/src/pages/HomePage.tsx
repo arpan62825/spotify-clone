@@ -3,9 +3,10 @@ import { useMusicStore } from "@/stores/useMusicStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Play } from "lucide-react";
 import usePlayerStore from "@/stores/usePlayerStore.ts";
+import type { Song } from "@/types";
 
 export default function HomePage() {
-  const { setCurrentSong, togglePlay, isPlaying, initializeQueue } =
+  const { setCurrentSong } =
     usePlayerStore();
 
   const {
@@ -38,10 +39,8 @@ export default function HomePage() {
     }
   }, []);
 
-  const handleMusicPlay = (song) => {
+  const handleMusicPlay = (song: Song) => {
     setCurrentSong(song);
-    console.log("Hello hi honey bunny");
-    // isPlaying ? () => togglePlay() : null;
   };
 
   return (

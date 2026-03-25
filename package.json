@@ -1,0 +1,23 @@
+{
+  "name": "spotify_clone",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/arpan62825/spotify-clone#readme",
+  "bugs": {
+    "url": "https://github.com/arpan62825/spotify-clone/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arpan62825/spotify-clone.git"
+  },
+  "license": "ISC",
+  "author": "Arpan Das",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "start": "npm start --prefix backend"
+
+  }
+}

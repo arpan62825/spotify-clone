@@ -31,7 +31,7 @@ interface MusicStore {
   setStats: () => Promise<void>;
 }
 
-export const useMusicStore = create<MusicStore>((set, get) => {
+export const useMusicStore = create<MusicStore>((set) => {
   return {
     songs: [],
     albums: [],
@@ -133,7 +133,6 @@ export const useMusicStore = create<MusicStore>((set, get) => {
       set({ isLoading: true });
       try {
         const res = await axiosInstance.get("/stat");
-        console.log("hi");
         console.log(res.data);
         set({ stats: res.data });
       } catch (error) {

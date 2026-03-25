@@ -16,9 +16,20 @@ import axiosInstance from "@/lib/axios";
 import toast, { Toaster } from "react-hot-toast";
 const notify = () => toast("👍 Song uploaded to cloud");
 
+type ExtractedMetadata = {
+  title: string | null;
+  artist: string | null;
+  album: string | null;
+  duration: number;
+  imageUrl: {
+    format: string;
+    data: string;
+  };
+};
+
 const AddSongButton = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [metadata, setMetadata] = useState<any>(null);
+  const [metadata, setMetadata] = useState<ExtractedMetadata | null>(null);
   const [loading, setLoading] = useState(false);
 
   // format seconds -> m:ss
@@ -28,7 +39,7 @@ const AddSongButton = () => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
-  const onDrop = async (acceptedFiles: File[]) => {
+  const onDrop = async (acceptedFiles: File[]): Promise<void> => {
     const selectedFile = acceptedFiles[0];
     if (!selectedFile) return;
 
@@ -39,7 +50,10 @@ const AddSongButton = () => {
     formData.append("audioFile", selectedFile);
 
     try {
-      const res = await axiosInstance.post("/admin/songs/extract", formData);
+      const res = await axiosInstance.post<ExtractedMetadata>(
+        "/admin/songs/extract",
+        formData,
+      );
       setMetadata(res.data); // backend returns extracted metadata
     } catch (error) {
       console.error("Metadata extraction failed:", error);
@@ -59,7 +73,10 @@ const AddSongButton = () => {
 
     try {
       console.log(formData);
-      const res = await axiosInstance.post("/admin/songs", formData);
+      const res = await axiosInstance.post<{ message: string }>(
+        "/admin/songs",
+        formData,
+      );
       console.log(res.data);
       setFile(null);
       setMetadata(null);
@@ -111,8 +128,12 @@ const AddSongButton = () => {
                 <div className="size-28 border-zinc-400 border rounded-md">
                   <img
                     className="size-full object-cover object-center overflow-hidden"
-                    src={`data:${metadata.imageUrl.format};base64,${metadata.imageUrl.data}`}
-                    alt={metadata.title}
+                    src={
+                      metadata?.imageUrl
+                        ? `data:${metadata.imageUrl.format};base64,${metadata.imageUrl.data}`
+                        : ""
+                    }
+                    alt={metadata.title || "Unknown"}
                   />
                 </div>
                 <div className="flex flex-col justify-between">
@@ -127,7 +148,9 @@ const AddSongButton = () => {
                   </p>
                   <p>
                     <strong>Duration:</strong>{" "}
-                    {formatDuration(metadata.duration) || "Unknown"}
+                    {metadata.duration
+                      ? formatDuration(metadata.duration)
+                      : "Unknown"}
                   </p>
                 </div>
               </div>
@@ -138,7 +161,6 @@ const AddSongButton = () => {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
-                onClick={handleSubmit}
                 type="submit"
                 disabled={!metadata || loading}
               >
