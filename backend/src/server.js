@@ -5,7 +5,6 @@ import { clerkMiddleware } from "@clerk/express";
 import path from "path";
 import cors from "cors";
 
-
 // ...
 import { connectToDatabase } from "./lib/database.js";
 
@@ -15,7 +14,7 @@ import songRoutes from "./routes/song.route.js";
 import authRoutes from "./routes/auth.route.js";
 import statRoutes from "./routes/stat.route.js";
 import userRoutes from "./routes/user.route.js";
-import adminRoutes from "./routes/admin.route.js"
+import adminRoutes from "./routes/admin.route.js";
 
 const __dirname = path.resolve();
 dotenv.config();
@@ -31,14 +30,13 @@ app.use(
       "Authorization",
       "X-Requested-With",
       "Clerk-Redirect-To",
-      "Clerk-Token"
+      "Clerk-Token",
     ],
-  })
+  }),
 );
 
 app.use(express.json());
 app.use(clerkMiddleware());
-
 
 app.use("/api/album", albumRoutes);
 app.use("/api/auth", authRoutes);
@@ -52,7 +50,7 @@ if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../frontend/dist");
   app.use(express.static(frontendPath));
 
-  app.get("*", (req, res) => {
+  app.get("/.*/", (req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
