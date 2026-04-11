@@ -17,8 +17,7 @@ export const isAdmin = async (req, res, next) => {
     const currentUser = await clerkClient.users.getUser(req.auth.userId);
 
     const isAdmin =
-      (await currentUser)?.primaryEmailAddress.emailAddress ===
-      process.env.ADMIN_EMAIL;
+      currentUser?.primaryEmailAddress.emailAddress === process.env.ADMIN_EMAIL;
 
     if (!isAdmin) {
       return res

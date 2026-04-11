@@ -63,8 +63,9 @@ const AddSongButton = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log("submit button clicked")
     e.preventDefault();
-    if (!file || !metadata) return;
+    if (!file) return;
 
     setLoading(true);
 
@@ -81,6 +82,7 @@ const AddSongButton = () => {
       setFile(null);
       setMetadata(null);
     } catch (error) {
+
       console.error("Final upload failed:", error);
     } finally {
       setLoading(false);
@@ -97,7 +99,6 @@ const AddSongButton = () => {
   return (
     <>
       <Dialog>
-        <form onSubmit={handleSubmit}>
           <DialogTrigger asChild>
             <Button className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600">
               <Plus className="h-4 w-4" />
@@ -105,6 +106,7 @@ const AddSongButton = () => {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-sm">
+        <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Add Song</DialogTitle>
               <DialogDescription>
@@ -162,13 +164,13 @@ const AddSongButton = () => {
               </DialogClose>
               <Button
                 type="submit"
-                disabled={!metadata || loading}
+                disabled={!file || loading}
               >
                 Upload Song
               </Button>
             </DialogFooter>
-          </DialogContent>
         </form>
+          </DialogContent>
       </Dialog>
       {/* react-hot-toast */}
       <Toaster

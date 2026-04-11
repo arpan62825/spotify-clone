@@ -5,6 +5,8 @@ import Stats from "./layout/components/Stats.tsx";
 
 const AdminPage = () => {
   const { isSignedIn, user } = useUser();
+  console.log(user?.id)
+  console.log(import.meta.env.VITE_CLERK_USER_ID)
   return (
     <div>
       {isSignedIn && user.id === import.meta.env.VITE_CLERK_USER_ID ? (
